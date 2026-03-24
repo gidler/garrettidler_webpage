@@ -1,18 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Garrett's Python REPL</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Push Fight</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: #f0ebe3;
+      font-family: system-ui, sans-serif;
+      color: #2c2c2c;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* --- Top zone: turn indicator + status --- */
+    #top-zone {
+      flex: 0 0 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px 8px;
+      overflow: hidden;
+    }
+    #turn-indicator {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+    #status {
+      font-size: 0.95rem;
+      min-height: 1.2em;
+      text-align: center;
+      color: #666;
+    }
+
+    /* --- Middle zone: board (fills available space) --- */
+    #board-zone {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      min-height: 0;
+      width: 100%;
+    }
+    #board-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+    #board-container svg {
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    /* --- Bottom zone: tray + controls (fixed height) --- */
+    #bottom-zone {
+      flex: 0 0 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding: 8px 16px 16px;
+      overflow: hidden;
+    }
+    #tray-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 500px;
+      height: 90px;
+    }
+    #tray-container svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+    }
+    #controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      min-height: 40px;
+      margin-top: 8px;
+    }
+    #controls button {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid #7f8c8d;
+      background: #5a4a3a;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.95rem;
+      position: relative;
+    }
+    @keyframes button-glow {
+      0%, 100% { box-shadow: 0 0 8px 2px rgba(58, 143, 212, 0); }
+      50% { box-shadow: 0 0 14px 6px rgba(58, 143, 212, 0.5); }
+    }
+    #controls button.glow {
+      animation: button-glow 2s ease-in-out infinite;
+    }
+    #controls button[data-active="true"] {
+      background: #c39a46;
+      color: #2c2c2c;
+      border-color: #a07830;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-Cyqpa1ce.js"></script>
 </head>
 <body>
-    <main>
-        <iframe
-            src="https://jupyterlite.github.io/demo/repl/index.html?kernel=python&theme=JupyterLab%20Dark"
-            width="100%"
-            height="600px"
-        ></iframe>
-    </main>
-    <footer>
-        <p>&copy; 2023 Garrett Idler</p>
-    </footer>
+  <div id="top-zone">
+    <div id="turn-indicator"></div>
+    <div id="status"></div>
+  </div>
+  <div id="board-zone">
+    <div id="board-container"></div>
+  </div>
+  <div id="bottom-zone">
+    <div id="tray-container"></div>
+    <div id="controls"></div>
+  </div>
 </body>
 </html>
