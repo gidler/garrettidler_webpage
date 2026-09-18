@@ -1,0 +1,1272 @@
+<!doctype html>
+<html lang="en" data-style="retro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101850" />
+    <title>NFL Quick Pick · 8-bit edition</title>
+    <style>
+      :root {
+        --ink: #edf0ed;
+        --muted: #a0aaa1;
+        --paper: #080b08;
+        --surface: #131614;
+        --surface-2: #1b201d;
+        --line: #2a312c;
+        --green: #baf36b;
+        --green-soft: #203b1f;
+        --win: #baf36b;
+        --win-soft: #203b1f;
+        --red: #ff7770;
+        --red-soft: #482d34;
+        --gold: #ffc857;
+        --gold-soft: #4a3d20;
+        --shadow: none;
+        --radius-lg: 12px;
+        --radius-md: 12px;
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.45;
+      }
+
+      button, input, select { font: inherit; }
+      :root { color-scheme: dark; }
+      button { cursor: pointer; }
+      button:disabled { cursor: not-allowed; }
+      select:focus-visible, button:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+
+      .shell {
+        width: min(1440px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        padding: 24px 0;
+        color: var(--ink);
+        border-bottom: 1px solid var(--line);
+        background: var(--paper);
+      }
+
+      .hero-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 32px;
+      }
+
+      h1, h2, h3, p { margin-top: 0; }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      h1 {
+        margin-bottom: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+      }
+
+      main { padding: 24px 0 48px; }
+      main > section + section { margin-top: 32px; }
+
+      .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 12px;
+      }
+
+      .section-heading h2 {
+        margin-bottom: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .section-heading p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .summary-grid {
+        display: grid;
+        width: min(100%, 610px);
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+      }
+
+      .summary-card {
+        display: grid;
+        grid-template-columns: 54px 1fr 92px;
+        align-items: center;
+        min-height: 42px;
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .summary-card:last-child { border-bottom: 0; }
+      .summary-card.is-leader { background: var(--green-soft); box-shadow: inset 3px 0 var(--green); }
+
+      .summary-rank {
+        color: var(--muted);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+
+      .summary-card.is-leader .summary-rank { color: var(--green); }
+
+      .summary-name {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .summary-points {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-end;
+        gap: 5px;
+        min-width: 92px;
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+
+      .summary-points span {
+        color: var(--muted);
+        font-family: inherit;
+        font-size: 0.63rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .table-wrap { overflow-x: auto; border-radius: inherit; }
+
+      .scoreboard {
+        width: 100%;
+        min-width: 790px;
+        border-collapse: collapse;
+      }
+
+      .scoreboard th,
+      .scoreboard td {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--line);
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .scoreboard thead th {
+        padding-top: 18px;
+        padding-bottom: 18px;
+        color: var(--muted);
+        background: var(--surface-2);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 0.68rem;
+        font-weight: 750;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .scoreboard thead th:first-child,
+      .scoreboard tbody td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        width: 190px;
+        text-align: left;
+      }
+
+      .scoreboard thead th:first-child {
+        z-index: 3;
+        background: var(--surface-2);
+      }
+
+      .scoreboard tbody td:first-child { background: var(--surface); }
+
+      .scoreboard tbody tr:last-child td { border-bottom: 0; }
+
+      .scoreboard tbody tr.current-week td { background: var(--green-soft); }
+      .scoreboard tbody tr.current-week td:first-child { background: var(--green-soft); }
+
+      .week-label {
+        display: block;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 0.86rem;
+        font-weight: 750;
+      }
+
+      .week-phase {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 0.72rem;
+      }
+
+      .pick {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 54px;
+        min-height: 30px;
+        padding: 5px 9px;
+        border-radius: 6px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+      }
+
+      .pick.win { color: var(--win); background: var(--win-soft); }
+      .pick.loss { color: var(--red); background: var(--red-soft); }
+      .pick.pending { color: var(--gold); background: var(--gold-soft); }
+      .pick.tie,
+      .pick.canceled { color: var(--muted); background: var(--surface-2); }
+      .pick.no-pick { color: var(--muted); background: var(--surface-2); }
+      .pick.future { color: var(--muted); background: transparent; }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        padding: 16px 20px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+      .legend .pick { min-width: 24px; min-height: 24px; padding: 3px 6px; font-size: 0.7rem; }
+
+      .mobile-picks,
+      .mobile-availability { display: none; }
+
+      .mobile-picks-controls { display: none; }
+
+      .picks-heading .mobile-picks-controls { margin-left: auto; }
+
+      .mobile-picks-controls button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 150px;
+        min-height: 44px;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        color: var(--ink);
+        background: var(--surface-2);
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      #week-label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+      .mobile-availability-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+        margin-bottom: 12px;
+      }
+
+      .mobile-availability-tab {
+        min-height: 44px;
+        padding: 8px;
+        border: 0;
+        border-radius: 8px;
+        color: var(--muted);
+        background: transparent;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .mobile-availability-tab.active {
+        color: var(--green);
+        background: var(--green-soft);
+      }
+
+      .mobile-team-table {
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+      }
+
+      .mobile-team-table-header,
+      .mobile-team-table-row {
+        display: grid;
+        grid-template-columns: 64px repeat(6, minmax(0, 1fr));
+        align-items: center;
+      }
+
+      .mobile-team-table-header {
+        position: sticky;
+        top: 0;
+        z-index: 4;
+        border-radius: 11px 11px 0 0;
+        box-shadow: 0 1px var(--line);
+        min-height: 43px;
+        color: var(--muted);
+        background: var(--surface-2);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .mobile-team-table-header span:first-child {
+        padding-left: 12px;
+        text-align: left;
+      }
+      .mobile-team-table-header span:not(:first-child) {
+        width: 25px;
+        justify-self: center;
+        text-align: center;
+      }
+
+      .mobile-division-row {
+        padding: 7px 12px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        background: var(--surface-2);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .mobile-team-table-row {
+        min-height: 45px;
+        border-top: 1px solid var(--line);
+      }
+
+      .mobile-team-table-row > * { min-width: 0; text-align: center; }
+      .mobile-team-table-row > .availability-mark { justify-self: center; }
+
+      .mobile-team-table-row .mobile-team-name {
+        overflow: hidden;
+        padding: 7px 8px 7px 12px;
+        text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .mobile-team-name strong {
+        display: block;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
+
+      .mobile-team-table-row .availability-mark { width: 25px; height: 21px; }
+      .mobile-team-table-row .availability-mark.available::after { width: 6px; height: 6px; }
+
+      .mobile-pick-week {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+      }
+
+      .mobile-pick-week + .mobile-pick-week { margin-top: 12px; }
+      .mobile-pick-week.current-week { border-color: var(--green); }
+
+      .mobile-week-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface-2);
+      }
+
+      .mobile-week-header strong { font-size: 15px; font-weight: 600; }
+      .mobile-week-header small {
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .mobile-pick-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .mobile-pick-entry {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        min-width: 0;
+        padding: 10px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .mobile-pick-entry:nth-last-child(-n + 2) { border-bottom: 0; }
+      .mobile-pick-entry:nth-child(odd) { border-right: 1px solid var(--line); }
+
+      .mobile-pick-player {
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .mobile-pick-entry .pick { min-width: 56px; min-height: 28px; padding: 4px 6px; font-size: 12px; }
+
+      .availability-panel {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .availability-table {
+        width: 100%;
+        min-width: 720px;
+        border-collapse: collapse;
+      }
+
+      .availability-table th,
+      .availability-table td {
+        height: 39px;
+        padding: 7px 10px;
+        border-bottom: 1px solid var(--line);
+        text-align: center;
+      }
+
+      .availability-table thead th {
+        padding-top: 14px;
+        padding-bottom: 14px;
+        color: var(--muted);
+        background: var(--surface-2);
+        font-size: 0.72rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .availability-table th:first-child,
+      .availability-table td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        width: 200px;
+        text-align: left;
+      }
+
+      .availability-table thead th:first-child {
+        z-index: 3;
+        padding-left: 14px;
+        background: var(--surface-2);
+      }
+      .availability-table tbody td:first-child { background: var(--surface); }
+      .availability-table tbody tr:last-child td { border-bottom: 0; }
+
+      .division-row th {
+        height: 31px;
+        padding: 8px 12px;
+        color: var(--muted);
+        background: var(--surface-2);
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .team-label {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .team-label strong {
+        flex: 0 0 40px;
+        width: 40px;
+        color: var(--ink);
+        font-size: 0.8rem;
+        letter-spacing: 0.04em;
+      }
+
+      .availability-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 23px;
+        border-radius: 6px;
+        font-size: 0.66rem;
+        font-weight: 600;
+      }
+
+      .availability-mark.available::after {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        content: "";
+        opacity: 0.72;
+      }
+
+      .availability-mark.used {
+        color: var(--muted);
+        background: var(--surface-2);
+      }
+
+      @media (max-width: 1120px) {
+        .summary-grid { width: min(100%, 610px); }
+      }
+
+      @media (max-width: 760px) {
+        .summary-grid { width: 100%; }
+        .scoreboard th, .scoreboard td { padding-right: 9px; padding-left: 9px; }
+        .scoreboard thead th:first-child, .scoreboard tbody td:first-child { width: 125px; }
+        .desktop-picks,
+        .availability-panel { display: none; }
+        .mobile-picks-controls {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 12px;
+        }
+        .picks-heading { display: flex; align-items: center; }
+        .picks-heading h2 { margin-bottom: 0; }
+        .mobile-picks,
+        .mobile-availability { display: block; }
+      }
+
+      @media (max-width: 430px) {
+        .summary-card { grid-template-columns: 40px 1fr 82px; }
+        .summary-points { min-width: 82px; }
+      }
+      .theme-toolbar {
+        display: flex;
+        gap: 8px;
+        margin-top: 18px;
+        max-width: 361px;
+      }
+      .theme-toolbar button, .dialog-close {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        color: var(--ink);
+      }
+      #theme-toggle { flex: 1; font-size: 14px; }
+      .theme-panel { margin-top: 16px; }
+      .theme-panel p { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+      .theme-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; max-width: 800px; }
+      .theme-choice {
+        display: grid;
+        gap: 8px;
+        text-align: left;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--ink);
+        font-size: 13px;
+      }
+      .theme-choice[aria-pressed="true"] { border-color: var(--green); background: var(--green-soft); }
+      .swatches { display: flex; gap: 4px; }
+      .swatches i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--muted); }
+      .week-dialog {
+        position: fixed;
+        inset: 0;
+        margin: auto;
+        width: min(480px, calc(100% - 32px));
+        max-height: 85vh;
+        max-height: 85dvh;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+        color: var(--ink);
+        overflow: hidden;
+        box-shadow: 0 24px 80px #0006;
+      }
+      .week-dialog[open] { display: flex; flex-direction: column; }
+      .week-dialog::backdrop { background: #0009; }
+      .dialog-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line);
+        flex-shrink: 0;
+      }
+      .dialog-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
+      .dialog-close { font-size: 24px; line-height: 1; }
+      .week-options {
+        padding: 16px 16px max(20px, env(safe-area-inset-bottom));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+      .week-options h3 { margin: 20px 0 10px; font-size: 13px; color: var(--muted); font-weight: 600; }
+      .week-options h3:first-child { margin-top: 0; }
+      .week-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .week-grid.playoffs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .week-option {
+        min-height: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        padding: 8px 4px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        color: var(--ink);
+        background: var(--surface-2);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .week-option small { font-size: 11px; font-weight: 400; color: var(--muted); }
+      .week-option[aria-pressed="true"] { border-color: var(--green); background: var(--green-soft); color: var(--green); }
+      .week-option:disabled { background: transparent; color: var(--muted); border-style: dashed; opacity: 0.55; }
+      @media (max-width: 760px) {
+        .theme-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .week-dialog { inset: auto 0 0; width: 100%; max-width: 100%; margin: 0; border-radius: 16px 16px 0 0; border-bottom: 0; }
+      }
+
+      /* Shape and typography are independent of the selected color palette. */
+      .style-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
+      .style-toolbar > span { font-size: 12px; color: var(--muted); margin-right: 4px; }
+      .style-choice { min-height: 44px; padding: 8px 10px; font-size: 12px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: var(--surface); }
+      .style-choice[aria-pressed="true"] { color: var(--green); background: var(--green-soft); border-color: var(--green); }
+      .edition-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; color: var(--muted); font-size: 13px; text-underline-offset: 4px; }
+      a:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+      :root:not([data-style="rounded"]) { --radius-lg: 2px; --radius-md: 2px; }
+      :root:not([data-style="rounded"]) :is(button, .pick, .availability-mark, .mobile-team-table-header, .week-dialog, .swatches i) { border-radius: 2px; }
+      :root:not([data-style="rounded"]) :is(.summary-rank, .summary-points, .pick, .team-label strong, .mobile-team-name strong, .availability-mark) { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; }
+      :root[data-palette="All-American"] .hero { border-top: 4px solid #c83c45; }
+      :root[data-style="terminal"], :root[data-style="pixel"] { --radius-lg: 0; --radius-md: 0; }
+      :root[data-style="terminal"] body { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; }
+      :root[data-style="terminal"] :is(h1, h2, .summary-name, .mobile-pick-player, .week-label, .scoreboard thead th) { font-family: inherit; letter-spacing: -0.03em; }
+      :root[data-style="terminal"] .section-heading h2 { font-size: 18px; }
+      :root[data-style="terminal"] .section-heading h2::before { content: "> "; color: var(--green); }
+      :root[data-style="terminal"] :is(button, .pick, .availability-mark, .mobile-team-table-header, .week-dialog) { border-radius: 0; }
+      :root[data-style="terminal"] .summary-card.is-leader { box-shadow: none; }
+      :root[data-style="terminal"] .summary-rank::before { content: "["; }
+      :root[data-style="terminal"] .summary-rank::after { content: "]"; }
+      :root[data-style="terminal"] .availability-mark.available::after { border-radius: 0; }
+      :root[data-style="pixel"] :is(h1, .section-heading h2) { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-weight: 800; letter-spacing: -0.04em; text-transform: uppercase; }
+      :root[data-style="pixel"] .section-heading h2 { font-size: 18px; }
+      :root[data-style="pixel"] :is(.summary-grid, .panel, .mobile-pick-week, .mobile-team-table, .availability-panel) { border-width: 2px; box-shadow: 3px 3px 0 var(--line); }
+      :root[data-style="pixel"] :is(button, .pick, .availability-mark, .mobile-team-table-header, .week-dialog, .availability-mark.available::after) { border-radius: 0; }
+      :root[data-style="pixel"] .mobile-week-header { border-bottom-width: 2px; }
+      @media (max-width: 360px) {
+        :root[data-style="terminal"] .mobile-pick-entry { padding: 10px 6px; gap: 4px; }
+        :root[data-style="terminal"] .mobile-pick-player { font-size: 12px; }
+      }
+
+      /* Standalone retro experiment. Shared game behavior matches index.html. */
+      @font-face { font-family: "Quick Pick Pixel"; src: url(data:font/ttf;base64,AAEAAAAKAIAAAwAgT1MvMk7xVr8AAACsAAAATmNtYXAORRCfAAAA/AAAAkxnbHlmBZ/ihQAAA0gAADRgaGVhZGEKQ6IAADeoAAAANmhoZWEFFgIgAAA34AAAACRobXR4ZMgAAAAAOAQAAACsbG9jYQAE1ZQAADiwAAAAsG1heHAATwCOAAA5YAAAACBuYW1lDX4eCAAAOYAAAADAcG9zdP+fADMAADpAAAAAIAAAAlgBkAAFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABRUElYAEAAIAB6AyD/OAAAAyAAyAAAAAAAAQADAAEAAAAMAAQCQAAAAIwAgAAGAAwAIAAtAC4ALwAwADEAMgAzADQANQA2ADcAOAA5ADoAPAA+AEEAQgBDAEQARQBGAEcASABJAEoASwBMAE0ATgBPAFAAUQBSAFMAVABVAFYAVwBYAFkAWgBhAGIAYwBkAGUAZgBnAGgAaQBqAGsAbABtAG4AbwBwAHEAcgBzAHQAdQB2AHcAeAB5AHr//wAAACAALQAuAC8AMAAxADIAMwA0ADUANgA3ADgAOQA6ADwAPgBBAEIAQwBEAEUARgBHAEgASQBKAEsATABNAE4ATwBQAFEAUgBTAFQAVQBWAFcAWABZAFoAYQBiAGMAZABlAGYAZwBoAGkAagBrAGwAbQBuAG8AcABxAHIAcwB0AHUAdgB3AHgAeQB6////4P/4//j/+f/r/+v/6//r/+v/6//r/+v/6//r/+3/7v/r/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP/A/8D/wP+g/6D/oP+g/6D/oP+g/6D/oP+g/6D/oP+g/6D/oP+g/6D/oP+g/6D/oP+g/6D/oP+g/6AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAOwA/AEMARwAAAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAGQAAABkAAAAAAAAAGQAAAAAAAAAZAAA/nAAAABkAAABLAAAAGQAAP4MAAAAZAAAASwAAABkAAD+DAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAA/gwAAABkAAABLAAAAGQAAP4MAAAAZAAAASwAAABkAAD+DAAAAGQAAAEsAAAAZAAAAlgAZAAA/5wAAABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+cABQAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAOwA/AEMARwBLAE8AAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAD+cAAAAGQAAAEsAAAAZAAA/gwAAABkAAABLAAAAGQAAP4MAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAA/nAAAABkAAABLAAAAGQAAP4MAAAAZAAAASwAAABkAAD+DAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAJYAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAZAAA/5wADQAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMAAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAZAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAP4MAAAAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAAAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAJYAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAAGQAAP+c/5wAZAAA/5z/nABkAAD/nP+cAGQAAP+c/5wAZAAA/5z/nABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAEgAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwBHAAABAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAP5wAAAAZAAAASwAAABkAAD+DAAAAGQAAAEsAAAAZAAA/gwAAABkAAABLAAAAGQAAP4MAAAAZAAAASwAAABkAAD+DAAAAGQAAAEsAAAAZAAA/gwAAABkAAAAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAACWABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAEgAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwBHAAABAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAA/gwAAABkAAD/nAAAAGQAAP+cAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAA/nAAAABkAAD/nAAAAGQAAP+cAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAACWABkAAD/nAAAAGQAAP+c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AGQAAAJYAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nAATAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3ADsAPwBDAEcASwAAAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQAAAAAAZAAAASwAAABkAAD+DAAAAGQAAAAAAAAAZAAAAMgAAABkAAD+DAAAAGQAAAAAAAAAZAAAAMgAAABkAAD+DAAAAGQAAABkAAAAZAAAAGQAAABkAAD+DAAAAGQAAADIAAAAZAAAAAAAAABkAAD+DAAAAGQAAADIAAAAZAAAAAAAAABkAAD+DAAAAGQAAAEsAAAAZAAAAlgAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAAAQAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3ADsAPwAAAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQBkAAAAZAAAAAAAAABkAAAAAAAAAGQAAP5wAAAAZAAAASwAAABkAAD+DAAAAGQAAAEsAAAAZAAA/gwAAABkAAABLAAAAGQAAP4MAAAAZAAAASwAAABkAAD+DAAAAGQAAAEsAAAAZAAA/nAAAABkAAAAAAAAAGQAAAAAAAAAZAAAAlgAZAAA/5wAAABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABk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AGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAAGQAAP+c/5wAZAAA/5z/nABkAAD/nP+cAGQAAP+c/5wAZAAA/5z/nABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAAATAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3ADsAPwBDAEcASwAAAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQBkAAAAZAAAAAAAAABkAAAAAAAAAGQAAP5wAAAAZAAAASwAAABkAAD+DAAAAGQAAADIAAAAZAAAAAAAAABkAAD+DAAAAGQAAABkAAAAZAAAAGQAAABkAAD+DAAAAGQAAAAAAAAAZAAAAMgAAABkAAD+DAAAAGQAAAEsAAAAZAAA/nAAAABkAAAAAAAAAGQAAAAAAAAAZAAAAlgAZAAA/5wAAABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAAAKAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwAAAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQDIAAAAZAAA/zgAAABkAAAAAAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAZAAA/zgAAABkAAAAAAAAAGQAAAAAAAAAZAAAAlgAZAAA/5z/nABkAAD/nAAAAGQAAP+c/5wAZAAA/5z/nABkAAD/nP+cAGQAAP+c/5wAZAAA/5z/nABkAAD/nAAAAGQAAP+cAAAAZAAA/5wADgAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwAAAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAZAAAAGQAAAAAAAAAZAAAAAAAAABkAAD+cAAAAGQAAAEsAAAAZAAA/5wAAABkAAD/OAAAAGQAAP84AAAAZAAA/zgAAABkAAD/OAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAAAlgAZAAA/5wAAABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nP+cAGQAAP+c/5wAZAAA/5z/nABkAAD/nP+cAGQAAP+c/5wAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAPAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3ADsAAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAD/nAAAAGQAAP5wAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAA/5wAAABkAAD+DAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAJYAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAAGQAAP+c/5wAZAAA/5z/nABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+c/5wAZAAA/5z/nABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAAA4AAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBASwAAABkAAD/OAAAAGQAAAAAAAAAZAAA/tQAAABkAAAAZAAAAGQAAP5wAAAAZAAAAMgAAABkAAD+cAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAA/zgAAABkAAD/nAAAAGQAAAJYAGQAAP+c/5wAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+c/5wAZAAA/5wAEQAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AD8AQwAAAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAA/gwAAABkAAD/nAAAAGQAAP+cAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAD/nAAAAGQAAP4MAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAAAlgAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+c/5wAZAAA/5z/nABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nP+cAGQAAP+c/5wAZAAA/5z/nABkAAD/nAAAAGQAAP+cAAAAZAAA/5wAAABkAAD/nAAAABAAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAOwA/AAABAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAGQAAABkAAAAAAAAAGQAAAAAAAAAZAAA/nAAAABkAAD/nAAAAGQAAP+cAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAA/nAAAABkAAABLAAAAGQAAP4MAAAAZAAAASwAAABkAAD+cAAAAGQAAAAAAAAAZAAAAAAAAABkAAACWABkAAD/nAAAAGQAAP+cAAAAZAAA/5z/nABkAAD/nP+cAGQAAP+c/5wAZAAA/5wAAABkAAD/nAAAAGQAAP+cAAAAZAAA/5z/nABkAAD/nAAAAGQAAP+c/5wAZAAA/5wAAABkAAD/nP+cAGQAAP+cAAAAZAAA/5wAAABkAAD/nAALAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAAABAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQAAAAAAZAAAAAAAAABkAAAAAAAAAGQAAAAAAAAAZAAAAAAAAABkAAD/nAAAAGQAAP84AAAAZAAA/zgAAABkAAD/OAAAAGQAAP+cAAAAZAAA/5wAAABkAAACWABkAAD/nAAAAGQAAP+cAAAAZAAA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) format("truetype"); font-weight: 100 900; font-display: swap; }
+      :root { color-scheme: dark; --paper: #104828; --surface: #101850; --surface-2: #202868; --ink: #fffce8; --muted: #b8c0e0; --line: #5868a8; --green: #ffdc60; --green-soft: #283078; --win: #88f888; --win-soft: #164830; --red: #ff9ca0; --red-soft: #502038; --gold: #ffdc60; --gold-soft: #483c18; --radius-lg: 0; --radius-md: 0; }
+      body { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; background-color: var(--paper); background-image: repeating-linear-gradient(0deg, transparent 0 98px, #e8ffdc25 98px 100px), repeating-linear-gradient(0deg, #0000 0 100px, #0002 100px 200px); }
+      .shell { max-width: 1100px; }
+      .hero { background: #101850; border-top: 8px solid #c83040; border-bottom: 4px solid #fffce8; padding: 20px 0; box-shadow: 0 4px 0 #080c28; }
+      .retro-masthead { display: flex; align-items: center; gap: 16px; justify-content: space-between; }
+      h1 { font-family: "Quick Pick Pixel", monospace; font-size: 30px; font-weight: 400; line-height: 1.35; letter-spacing: 0; text-transform: uppercase; color: #ffdc60; text-shadow: 3px 3px #080c28; }
+      .retro-ball { width: 56px; height: 56px; flex-shrink: 0; image-rendering: pixelated; }
+      main { padding-top: 28px; }
+      .section-heading { min-height: 44px; padding: 4px 10px; background: #b82838; border: 2px solid #ff9090; border-right-color: #681828; border-bottom-color: #681828; box-shadow: 3px 3px #080c28; gap: 8px; }
+      .section-heading h2 { font-family: "Quick Pick Pixel", monospace; font-size: 20px; line-height: 1.6; font-weight: 400; letter-spacing: 0; text-transform: uppercase; color: #fffce8; text-shadow: 2px 2px #681828; }
+      .summary-grid { width: 100%; }
+      :root[data-style="retro"] :is(.summary-grid, .panel, .mobile-pick-week, .mobile-team-table, .availability-panel) { border: 2px solid #b8c0e0; border-radius: 0; box-shadow: 4px 4px #080c28; }
+      .summary-card { min-height: 46px; grid-template-columns: 40px 1fr 82px; }
+      .summary-card.is-leader { background: #283078; box-shadow: inset 4px 0 #ffdc60; }
+      :root[data-style="retro"] :is(.summary-name, .summary-rank, .summary-points, .pick, .mobile-team-name strong, .team-label strong, .availability-mark, .mobile-team-table-header, .mobile-pick-player, .mobile-week-header strong, .week-label) { font-family: "Quick Pick Pixel", monospace; font-weight: 400; letter-spacing: 0; }
+      .summary-name { font-size: 20px; line-height: 1.4; }
+      .summary-rank { font-size: 20px; }
+      .summary-points { font-size: 20px; color: #ffdc60; }
+      .summary-points span { font-size: 10px; }
+      .mobile-week-header { background: #283880; border-bottom: 2px solid #5868a8; }
+      .mobile-week-header strong { font-size: 20px; line-height: 1.4; }
+      .mobile-week-header small { font-size: 10px; letter-spacing: 0; }
+      .mobile-pick-week.current-week { border-color: #ffdc60; }
+      .mobile-pick-player { color: #fffce8; font-size: 20px; line-height: 1.4; }
+      .mobile-pick-entry { min-height: 48px; gap: 4px; padding: 8px; }
+      :root[data-style="retro"] .pick { font-size: 10px; min-height: 28px; line-height: 2; border-radius: 0; }
+      .mobile-pick-entry .pick { min-width: 50px; padding: 2px 4px; }
+      :root[data-style="retro"] :is(button, .mobile-team-table-header, .availability-mark, .week-dialog) { border-radius: 0; }
+      .mobile-picks-controls button { width: 128px; font-family: "Quick Pick Pixel", monospace; font-size: 10px; border: 2px solid #b8c0e0; background: #101850; }
+      .mobile-availability-tabs { padding: 0; gap: 2px; border: 2px solid #b8c0e0; background: #080c28; border-radius: 0; box-shadow: 3px 3px #080c28; }
+      .mobile-availability-tab { font-family: "Quick Pick Pixel", monospace; font-size: 10px; }
+      .mobile-availability-tab.active { box-shadow: inset 0 -3px #ffdc60; }
+      .mobile-team-table-header { font-size: 10px; }
+      .mobile-team-name strong, .team-label strong { font-size: 10px; }
+      .mobile-team-table-row .availability-mark { font-size: 10px; width: 28px; }
+      .availability-mark.available::after { border-radius: 0; opacity: 1; background: #88f888; box-shadow: 2px 2px #080c28; }
+      .availability-mark.used { color: #9ca8c8; background: #202858; }
+      .mobile-division-row, .division-row th { font-family: "Quick Pick Pixel", monospace; font-size: 10px; line-height: 2; letter-spacing: 0; color: #ffdc60; background: #080c28; }
+      .week-dialog { border: 3px solid #b8c0e0; box-shadow: 6px 6px #080c28; }
+      .dialog-header { background: #b82838; border-bottom: 3px solid #681828; }
+      .dialog-header h2 { font-family: "Quick Pick Pixel", monospace; font-size: 20px; line-height: 1.4; }
+      .week-option { border-width: 2px; font-family: "Quick Pick Pixel", monospace; font-size: 10px; line-height: 2; }
+      .week-option small { font-family: ui-monospace, monospace; font-size: 11px; }
+      .week-option:disabled { opacity: .6; }
+      /* Original team-colored lettering; tuned for legibility on these panels. */
+      :root[data-style="retro"] .team-wordmark {
+        display: inline-block;
+        color: var(--team-face);
+        font-family: "Quick Pick Pixel", monospace;
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 1.4;
+        letter-spacing: 0;
+        text-shadow:
+          -1px -1px 0 var(--team-edge), 0 -1px 0 var(--team-edge), 1px -1px 0 var(--team-edge),
+          -1px 0 0 var(--team-edge), 1px 0 0 var(--team-edge),
+          -1px 1px 0 var(--team-edge), 0 1px 0 var(--team-edge), 1px 1px 0 var(--team-edge),
+          2px 2px 0 var(--team-shadow), 3px 3px 0 #080c28;
+      }
+      .pick:has(.team-wordmark) { gap: 6px; }
+      .pick-result { font-family: ui-monospace, monospace; font-size: 12px; text-shadow: none; }
+      @media (forced-colors: active) {
+        :root[data-style="retro"] .team-wordmark { color: CanvasText; text-shadow: none; }
+      }
+      @media (max-width: 360px) {
+        h1 { font-size: 20px; }
+        .retro-ball { width: 40px; height: 40px; }
+        .section-heading h2 { font-size: 10px; }
+        .mobile-pick-grid { grid-template-columns: 1fr; }
+        .mobile-pick-entry:nth-child(odd) { border-right: 0; }
+        .mobile-pick-entry:nth-last-child(2) { border-bottom: 1px solid var(--line); }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="shell">
+        <div class="retro-masthead">
+          <h1>NFL<br>Quick Pick</h1>
+          <svg class="retro-ball" viewBox="0 0 32 32" aria-hidden="true" shape-rendering="crispEdges">
+            <path fill="#080c28" d="M20 2h10v12h-1v5h-2v4h-3v3h-3v2h-4v2h-5v1H2V19h1v-5h2v-4h3V7h3V5h4V3h5z"/>
+            <path fill="#bd682f" d="M20 3h9v9h-1v5h-2v4h-3v3h-3v2h-4v2h-5v1H3v-9h1v-5h2v-4h3V8h3V6h4V4h4z"/>
+            <path fill="#8c3e24" d="M27 5h2v7h-1v5h-2v4h-3v3h-3v2h-4v2h-5v1H3v-3h9v-1h4v-2h4v-2h3v-4h2v-5h1V8h1z"/>
+            <path fill="#e89c50" d="M20 4h7v2h-7v1h-4v2h-4v2H9v4H7v5H5v5H4v-5h1v-5h2v-4h3V8h3V6h4V5h3z"/>
+            <path fill="#fff4cf" d="M20 5h2v2h2v2h2v2h1v3h-2v-2h-2v-2h-2V8h-2V6h1zM5 19h2v2h2v2h2v2h3v2h-4v-2H8v-2H6v-2H5z"/>
+            <path fill="#632b20" d="M11 22v-2h2v-2h2v-2h2v-2h2v-2h2v-1h2v2h-2v2h-2v2h-2v2h-2v2h-2v2h-2z"/>
+            <path fill="#fff4cf" d="M11 20h2v-2h2v-2h2v-2h2v-2h2v2h-2v2h-2v2h-2v2h-2v2h-2z"/>
+            <path fill="#fff4cf" d="M10 18h2v2h2v2h-2v-2h-2zM14 14h2v2h2v2h-2v-2h-2zM18 10h2v2h2v2h-2v-2h-2z"/>
+            <path fill="#e89c50" d="M9 14h1v1H9zM12 11h1v1h-1zM17 8h1v1h-1zM8 17h1v1H8z"/>
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section aria-labelledby="standings-heading">
+        <div class="section-heading">
+          <div>
+            <h2 id="standings-heading">Leaderboard</h2>
+          </div>
+        </div>
+        <div class="summary-grid" id="summary-grid"></div>
+      </section>
+
+      <section aria-labelledby="scoreboard-heading">
+        <div class="section-heading picks-heading">
+          <div>
+            <h2 id="scoreboard-heading">Picks</h2>
+          </div>
+          <div class="mobile-picks-controls">
+            <button id="mobile-week-select" type="button" aria-haspopup="dialog" aria-controls="week-dialog" aria-expanded="false"><span id="week-label">Week 2</span><span aria-hidden="true">⌄</span></button>
+          </div>
+        </div>
+        <div class="panel desktop-picks">
+          <div class="table-wrap">
+            <table class="scoreboard">
+              <thead>
+                <tr>
+                  <th scope="col"><span class="sr-only">Week</span></th>
+                  <th scope="col">Alex</th>
+                  <th scope="col">Garrett</th>
+                  <th scope="col">Max</th>
+                  <th scope="col">Patrick</th>
+                  <th scope="col">Shane</th>
+                  <th scope="col">Spencer</th>
+                </tr>
+              </thead>
+              <tbody id="scoreboard-body"></tbody>
+            </table>
+          </div>
+          <div class="legend" aria-label="Pick status legend">
+            <span class="legend-item"><span class="pick win">✓</span> Win</span>
+            <span class="legend-item"><span class="pick loss">×</span> Loss</span>
+            <span class="legend-item"><span class="pick pending" aria-hidden="true"></span> Pending</span>
+            <span class="legend-item"><span class="pick no-pick">—</span> No pick</span>
+            <span class="legend-item"><span class="pick tie">T</span> Tie / canceled</span>
+          </div>
+        </div>
+        <div class="mobile-picks" id="mobile-picks"></div>
+      </section>
+
+      <section aria-labelledby="availability-heading">
+        <div class="section-heading">
+          <div>
+            <h2 id="availability-heading">Teams Remaining</h2>
+          </div>
+        </div>
+        <div class="availability-panel" id="availability-grid"></div>
+        <div class="mobile-availability" id="mobile-availability"></div>
+      </section>
+    </main>
+    <dialog class="week-dialog" id="week-dialog" aria-labelledby="week-dialog-title">
+      <div class="dialog-header">
+        <h2 id="week-dialog-title">Choose week</h2>
+        <button class="dialog-close" id="week-close" type="button" aria-label="Close week picker">×</button>
+      </div>
+      <div class="week-options" id="week-options"></div>
+    </dialog>
+
+    <script>
+      // Update this data as the season progresses. The currentWeekIndex is zero-based.
+      const currentWeekIndex = 1;
+      let mobileSelectedWeekIndex = currentWeekIndex;
+
+      const players = ["Alex", "Garrett", "Max", "Patrick", "Shane", "Spencer"];
+      const mobilePlayerLabels = { Alex: "A", Garrett: "G", Max: "M", Patrick: "P", Shane: "Sh", Spencer: "Sp" };
+
+      const teams = [
+        { code: "BUF", name: "Buffalo Bills", conference: "AFC", division: "East" },
+        { code: "MIA", name: "Miami Dolphins", conference: "AFC", division: "East" },
+        { code: "NE", name: "New England Patriots", conference: "AFC", division: "East" },
+        { code: "NYJ", name: "New York Jets", conference: "AFC", division: "East" },
+        { code: "BAL", name: "Baltimore Ravens", conference: "AFC", division: "North" },
+        { code: "CIN", name: "Cincinnati Bengals", conference: "AFC", division: "North" },
+        { code: "CLE", name: "Cleveland Browns", conference: "AFC", division: "North" },
+        { code: "PIT", name: "Pittsburgh Steelers", conference: "AFC", division: "North" },
+        { code: "HOU", name: "Houston Texans", conference: "AFC", division: "South" },
+        { code: "IND", name: "Indianapolis Colts", conference: "AFC", division: "South" },
+        { code: "JAX", name: "Jacksonville Jaguars", conference: "AFC", division: "South" },
+        { code: "TEN", name: "Tennessee Titans", conference: "AFC", division: "South" },
+        { code: "DEN", name: "Denver Broncos", conference: "AFC", division: "West" },
+        { code: "KC", name: "Kansas City Chiefs", conference: "AFC", division: "West" },
+        { code: "LAC", name: "Los Angeles Chargers", conference: "AFC", division: "West" },
+        { code: "LV", name: "Las Vegas Raiders", conference: "AFC", division: "West" },
+        { code: "DAL", name: "Dallas Cowboys", conference: "NFC", division: "East" },
+        { code: "NYG", name: "New York Giants", conference: "NFC", division: "East" },
+        { code: "PHI", name: "Philadelphia Eagles", conference: "NFC", division: "East" },
+        { code: "WAS", name: "Washington Commanders", conference: "NFC", division: "East" },
+        { code: "CHI", name: "Chicago Bears", conference: "NFC", division: "North" },
+        { code: "DET", name: "Detroit Lions", conference: "NFC", division: "North" },
+        { code: "GB", name: "Green Bay Packers", conference: "NFC", division: "North" },
+        { code: "MIN", name: "Minnesota Vikings", conference: "NFC", division: "North" },
+        { code: "ATL", name: "Atlanta Falcons", conference: "NFC", division: "South" },
+        { code: "CAR", name: "Carolina Panthers", conference: "NFC", division: "South" },
+        { code: "NO", name: "New Orleans Saints", conference: "NFC", division: "South" },
+        { code: "TB", name: "Tampa Bay Buccaneers", conference: "NFC", division: "South" },
+        { code: "ARI", name: "Arizona Cardinals", conference: "NFC", division: "West" },
+        { code: "LAR", name: "Los Angeles Rams", conference: "NFC", division: "West" },
+        { code: "SF", name: "San Francisco 49ers", conference: "NFC", division: "West" },
+        { code: "SEA", name: "Seattle Seahawks", conference: "NFC", division: "West" }
+      ];
+
+      const weeks = [
+        {
+          label: "Week 1",
+          phase: "Regular season",
+          picks: { Alex: "JAX", Garrett: null, Max: "LAC", Patrick: "LAC", Shane: "LAC", Spencer: "JAX" },
+          outcomes: { JAX: "win", LAC: "loss" }
+        },
+        {
+          label: "Week 2",
+          phase: "Regular season",
+          picks: { Alex: "CAR", Garrett: "TB", Max: "TB", Patrick: "SF", Shane: null, Spencer: "TB" },
+          outcomes: {}
+        },
+        { label: "Week 3", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 4", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 5", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 6", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 7", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 8", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 9", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 10", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 11", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 12", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 13", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 14", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 15", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 16", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 17", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Week 18", phase: "Regular season", picks: {}, outcomes: {} },
+        { label: "Wild Card", phase: "Playoffs", picks: {}, outcomes: {} },
+        { label: "Divisional", phase: "Playoffs", picks: {}, outcomes: {} },
+        { label: "Conference", phase: "Playoffs", picks: {}, outcomes: {} },
+        { label: "Super Bowl", phase: "Playoffs", picks: {}, outcomes: {} }
+      ];
+
+      const teamByCode = Object.fromEntries(teams.map((team) => [team.code, team]));
+      const divisionOrder = ["East", "North", "South", "West"];
+
+      function teamsInDivision(conference, division) {
+        return teams
+          .filter((team) => team.conference === conference && team.division === division)
+          .sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      function getPick(player, week) {
+        return week.picks[player] || null;
+      }
+
+      function getStatus(player, week, weekIndex) {
+        const pick = getPick(player, week);
+        if (weekIndex > currentWeekIndex) return "future";
+        if (!pick) return "no-pick";
+        return week.outcomes[pick] || "pending";
+      }
+
+      function statusLabel(status) {
+        return {
+          win: "✓",
+          loss: "×",
+          pending: "",
+          tie: "T",
+          canceled: "C",
+          "no-pick": "—",
+          future: "·"
+        }[status];
+      }
+
+      function statusDescription(status) {
+        return {
+          win: "win",
+          loss: "loss",
+          pending: "pending",
+          tie: "tie",
+          canceled: "canceled",
+          "no-pick": "no pick",
+          future: "not yet picked"
+        }[status];
+      }
+
+      function usedTeamsFor(player) {
+        const used = [];
+        weeks.forEach((week, weekIndex) => {
+          const pick = getPick(player, week);
+          if (pick) {
+            used.push({ code: pick, week, weekIndex, status: getStatus(player, week, weekIndex) });
+          }
+        });
+        return used;
+      }
+
+      function scoreFor(player) {
+        return weeks.reduce((score, week) => {
+          const pick = getPick(player, week);
+          return score + (pick && week.outcomes[pick] === "win" ? 1 : 0);
+        }, 0);
+      }
+
+      function renderSummary() {
+        const scores = players
+          .map((player, originalIndex) => ({ player, score: scoreFor(player), originalIndex }))
+          .sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex);
+        const highestScore = Math.max(...scores.map((entry) => entry.score));
+        let previousScore = null;
+        let previousRank = 0;
+        const rankedScores = scores.map((entry, index) => {
+          if (entry.score !== previousScore) {
+            previousRank = index + 1;
+            previousScore = entry.score;
+          }
+          return { ...entry, rank: previousRank };
+        });
+        document.getElementById("summary-grid").innerHTML = rankedScores.map(({ player, score, rank }) => `
+          <article class="summary-card ${score === highestScore && score > 0 ? "is-leader" : ""}">
+            <div class="summary-rank">${rank}</div>
+            <div class="summary-name">${player}</div>
+            <div class="summary-points">${score}<span>PTS</span></div>
+          </article>
+        `).join("");
+      }
+
+      // Display palettes: face, outline, offset shadow. These are readable
+      // approximations for the retro skin, not official team brand specifications.
+      const teamLettering = {
+        BUF: ["#ffffff", "#2458b8", "#ed4050"],
+        MIA: ["#67e0cf", "#073d41", "#ff9345"],
+        NE: ["#e0e5f0", "#142d53", "#ed4050"],
+        NYJ: ["#a0e8bd", "#125d3b", "#ffffff"],
+        BAL: ["#dac3ff", "#502b8c", "#ddb64f"],
+        CIN: ["#ff9a48", "#221b20", "#ffffff"],
+        CLE: ["#ff9a48", "#4c2b1b", "#f7e1c4"],
+        PIT: ["#ffdb48", "#17191e", "#ffffff"],
+        HOU: ["#ffffff", "#193449", "#ed4050"],
+        IND: ["#ffffff", "#245ab4", "#74a6ed"],
+        JAX: ["#60dbc9", "#12483f", "#d8ad55"],
+        TEN: ["#8dd7ff", "#153957", "#ed4050"],
+        DEN: ["#ffad67", "#142d53", "#ffffff"],
+        KC: ["#ffffff", "#b51e36", "#ffcb55"],
+        LAC: ["#ffdc60", "#146eb0", "#8addff"],
+        LV: ["#dce2ec", "#15191f", "#a1a8b7"],
+        DAL: ["#dce2ec", "#163764", "#79a4de"],
+        NYG: ["#ffffff", "#2458b8", "#ed4050"],
+        PHI: ["#8de0cd", "#154b48", "#dce2ec"],
+        WAS: ["#ffce55", "#6d2337", "#b74350"],
+        CHI: ["#ffad67", "#152744", "#ffffff"],
+        DET: ["#8addff", "#14669f", "#dce2ec"],
+        GB: ["#ffdc60", "#1b5339", "#56a86a"],
+        MIN: ["#d8baff", "#542991", "#ffce55"],
+        ATL: ["#ffffff", "#b51e36", "#858b9b"],
+        CAR: ["#72d4ff", "#142c40", "#bfcad8"],
+        NO: ["#e9d294", "#24211c", "#ffffff"],
+        TB: ["#ffffff", "#b51e36", "#b9ac98"],
+        ARI: ["#ffffff", "#a32c44", "#ffce55"],
+        LAR: ["#ffdc60", "#2458b8", "#8bb6ff"],
+        SF: ["#ffffff", "#b51e36", "#d5b578"],
+        SEA: ["#a7ed68", "#153957", "#a2b4cb"]
+      };
+
+      function teamWordmark(code) {
+        const [face, edge, shadow] = teamLettering[code] || ["#fffce8", "#101850", "#5868a8"];
+        return `<span class="team-wordmark" data-team="${code}" style="--team-face:${face};--team-edge:${edge};--team-shadow:${shadow}">${code}</span>`;
+      }
+
+      function pickContent(pick, status) {
+        if (!pick) return statusLabel(status);
+        const result = statusLabel(status);
+        return teamWordmark(pick) + (result ? ` <span class="pick-result" aria-hidden="true">${result}</span>` : "");
+      }
+
+      function renderScoreboard() {
+        document.getElementById("scoreboard-body").innerHTML = weeks.map((week, weekIndex) => `
+          <tr class="${weekIndex === currentWeekIndex ? "current-week" : ""}">
+            <td>
+              <span class="week-label">${week.label}</span>
+            </td>
+            ${players.map((player) => {
+              const pick = getPick(player, week);
+              const status = getStatus(player, week, weekIndex);
+              const teamName = pick ? teamByCode[pick].name : statusDescription(status);
+              const label = pick ? `${teamName}, ${statusDescription(status)}` : statusDescription(status);
+              return `<td><span class="pick ${status}" title="${label}" aria-label="${label}">${pickContent(pick, status)}</span></td>`;
+            }).join("")}
+          </tr>
+        `).join("");
+      }
+
+      function renderMobilePicks() {
+        document.getElementById("week-label").textContent = weeks[mobileSelectedWeekIndex].label;
+        const visibleWeekIndices = [mobileSelectedWeekIndex, mobileSelectedWeekIndex - 1].filter((weekIndex) => weekIndex >= 0);
+        document.getElementById("mobile-picks").innerHTML = visibleWeekIndices.map((weekIndex) => {
+          const week = weeks[weekIndex];
+          return `
+          <article class="mobile-pick-week ${weekIndex === currentWeekIndex ? "current-week" : ""}">
+            <div class="mobile-week-header"><strong>${week.label}</strong></div>
+            <div class="mobile-pick-grid">
+              ${players.map((player) => {
+                const pick = getPick(player, week);
+                const status = getStatus(player, week, weekIndex);
+                const teamName = pick ? teamByCode[pick].name : statusDescription(status);
+                const label = pick ? `${teamName}, ${statusDescription(status)}` : statusDescription(status);
+                return `<div class="mobile-pick-entry"><span class="mobile-pick-player">${player}</span><span class="pick ${status}" title="${label}" aria-label="${label}">${pickContent(pick, status)}</span></div>`;
+              }).join("")}
+            </div>
+          </article>
+          `;
+        }).join("");
+      }
+
+      function setupMobileWeekSelector() {
+        const trigger = document.getElementById("mobile-week-select");
+        const dialog = document.getElementById("week-dialog");
+        const options = document.getElementById("week-options");
+        let savedScroll = 0;
+        const renderOptions = () => {
+          const renderWeek = (week, index) => {
+            const selected = index === mobileSelectedWeekIndex;
+            const future = index > currentWeekIndex;
+            const state = future ? "Upcoming" : selected ? "✓ Selected" : index === currentWeekIndex ? "Current" : "Past";
+            return `<button type="button" class="week-option" data-week="${index}" aria-pressed="${selected}" ${future ? "disabled" : ""}><span>${week.label}</span><small>${state}</small></button>`;
+          };
+          options.innerHTML = `<h3>Regular season</h3><div class="week-grid">${weeks.slice(0, 18).map(renderWeek).join("")}</div>
+            <h3>Playoffs</h3><div class="week-grid playoffs">${weeks.slice(18).map((week, i) => renderWeek(week, i + 18)).join("")}</div>`;
+        };
+        trigger.addEventListener("click", () => {
+          renderOptions();
+          savedScroll = window.scrollY;
+          document.body.style.position = "fixed";
+          document.body.style.top = -savedScroll + "px";
+          document.body.style.width = "100%";
+          dialog.showModal();
+          trigger.setAttribute("aria-expanded", "true");
+          options.querySelector('[aria-pressed="true"]').focus({ preventScroll: true });
+          options.querySelector('[aria-pressed="true"]').scrollIntoView({ block: "nearest", behavior: "instant" });
+        });
+        options.addEventListener("click", event => {
+          const button = event.target.closest("[data-week]");
+          if (!button || button.disabled) return;
+          const index = Number(button.dataset.week);
+          if (!Number.isInteger(index) || index < 0 || index > currentWeekIndex) return;
+          mobileSelectedWeekIndex = index;
+          renderMobilePicks();
+          dialog.close();
+        });
+        document.getElementById("week-close").addEventListener("click", () => dialog.close());
+        dialog.addEventListener("click", event => {
+          const rect = dialog.getBoundingClientRect();
+          if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
+        });
+        dialog.addEventListener("close", () => {
+          document.body.style.position = "";
+          document.body.style.top = "";
+          document.body.style.width = "";
+          window.scrollTo({ top: savedScroll, behavior: "instant" });
+          trigger.setAttribute("aria-expanded", "false");
+          trigger.focus({ preventScroll: true });
+        });
+        window.matchMedia("(min-width: 761px)").addEventListener("change", event => {
+          if (event.matches && dialog.open) dialog.close();
+        });
+      }
+
+      function renderAvailabilityCell(player, team) {
+        const used = usedTeamsFor(player).find((entry) => entry.code === team.code);
+        if (!used) {
+          return `<td><span class="availability-mark available" aria-label="${player} can still use ${team.name}" title="Available"></span></td>`;
+        }
+        const weekLabel = used.week.label.replace("Week ", "W");
+        return `<td><span class="availability-mark used" aria-label="${player} used ${team.name} in ${used.week.label}" title="Used in ${used.week.label}">${weekLabel}</span></td>`;
+      }
+
+      function renderAvailability() {
+        const renderConference = (conference) => `
+          ${divisionOrder.map((division) => `
+            <tr class="division-row"><th colspan="${players.length + 1}">${conference} ${division}</th></tr>
+            ${teamsInDivision(conference, division).map((team) => `
+              <tr>
+                <td><div class="team-label" title="${team.name}">${teamWordmark(team.code)}</div></td>
+                ${players.map((player) => renderAvailabilityCell(player, team)).join("")}
+              </tr>
+            `).join("")}
+          `).join("")}
+        `;
+
+        document.getElementById("availability-grid").innerHTML = `
+          <table class="availability-table">
+            <thead>
+              <tr>
+                <th scope="col">Team</th>
+                ${players.map((player) => `<th scope="col">${player}</th>`).join("")}
+              </tr>
+            </thead>
+            <tbody>
+              ${renderConference("AFC")}
+              ${renderConference("NFC")}
+            </tbody>
+          </table>
+        `;
+      }
+
+      function renderMobileAvailability() {
+        let selectedConference = "AFC";
+        const container = document.getElementById("mobile-availability");
+
+        const render = () => {
+          const renderDivision = (division) => `
+            <div class="mobile-division-row">${selectedConference} ${division}</div>
+            ${teamsInDivision(selectedConference, division).map((team) => `
+              <div class="mobile-team-table-row">
+                <div class="mobile-team-name" title="${team.name}">${teamWordmark(team.code)}</div>
+                ${players.map((player) => {
+                  const used = usedTeamsFor(player).find((entry) => entry.code === team.code);
+                  if (!used) {
+                    return `<span class="availability-mark available" aria-label="${player} can still use ${team.name}" title="Available"></span>`;
+                  }
+                  const weekLabel = used.week.label.replace("Week ", "W");
+                  return `<span class="availability-mark used" aria-label="${player} used ${team.name} in ${used.week.label}" title="Used in ${used.week.label}">${weekLabel}</span>`;
+                }).join("")}
+              </div>
+            `).join("")}
+          `;
+
+          container.innerHTML = `
+            <div class="mobile-availability-tabs" role="tablist" aria-label="Conference">
+              ${["AFC", "NFC"].map((conference) => `<button class="mobile-availability-tab ${conference === selectedConference ? "active" : ""}" type="button" role="tab" aria-selected="${conference === selectedConference}" data-conference="${conference}">${conference}</button>`).join("")}
+            </div>
+            <div class="mobile-team-table">
+              <div class="mobile-team-table-header">
+                <span>Team</span>
+                ${players.map((player) => `<span title="${player}">${mobilePlayerLabels[player]}</span>`).join("")}
+              </div>
+              ${divisionOrder.map(renderDivision).join("")}
+            </div>
+          `;
+
+          container.querySelectorAll(".mobile-availability-tab").forEach((button) => {
+            button.addEventListener("click", () => {
+              selectedConference = button.dataset.conference;
+              render();
+            });
+          });
+        };
+
+        render();
+      }
+
+      renderSummary();
+      renderScoreboard();
+      setupMobileWeekSelector();
+      renderMobilePicks();
+      renderAvailability();
+      renderMobileAvailability();
+    </script>
+  </body>
+</html>
