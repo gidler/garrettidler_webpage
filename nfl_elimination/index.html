@@ -751,7 +751,19 @@
       .mobile-team-name strong, .team-label strong { font-size: 10px; }
       .mobile-team-table-row .availability-mark { font-size: 10px; width: 28px; }
       .availability-mark.available::after { border-radius: 0; opacity: 1; background: #88f888; box-shadow: 2px 2px #080c28; }
-      .availability-mark.used { color: #9ca8c8; background: #202858; }
+      :root[data-style="retro"] .availability-mark.used {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 0;
+        width: 32px;
+        height: 34px;
+        border: 1px solid #a4aec4;
+        color: #182144;
+        background: #dfe2e8;
+        box-shadow: 2px 2px 0 #080c28;
+      }
+      .used-week-label { font-family: ui-monospace, monospace; font-size: 8px; font-weight: 700; line-height: 10px; letter-spacing: .04em; color: #45516b; }
+      .used-week-number { font-family: "Quick Pick Pixel", monospace; font-size: 20px; line-height: 20px; }
       .mobile-division-row, .division-row th { font-family: "Quick Pick Pixel", monospace; font-size: 10px; line-height: 2; letter-spacing: 0; color: #ffdc60; background: #080c28; }
       .week-dialog { border: 3px solid #b8c0e0; box-shadow: 6px 6px #080c28; }
       .dialog-header { background: #b82838; border-bottom: 3px solid #681828; }
@@ -776,6 +788,17 @@
       }
       .pick:has(.team-wordmark) { gap: 6px; }
       .pick-result { font-family: ui-monospace, monospace; font-size: 12px; text-shadow: none; }
+      .pick.win { --result-border: #16832b; --result-ink: #165a30; }
+      .pick.loss { --result-border: #ba1825; --result-ink: #8c1830; }
+      .pick.pending { --result-border: #ffda32; --result-ink: #644600; }
+      .pick.tie, .pick.canceled { --result-border: #77859e; --result-ink: #45516b; }
+      :root[data-style="retro"] .pick:is(.win, .loss, .pending, .tie, .canceled) {
+        border: 3px solid var(--result-border);
+        border-radius: 0;
+        background: #b8b8b8;
+        color: var(--result-ink);
+        box-shadow: 1px 1px 0 #080c28;
+      }
       @media (forced-colors: active) {
         :root[data-style="retro"] .team-wordmark { color: CanvasText; text-shadow: none; }
       }
@@ -1177,13 +1200,20 @@
         });
       }
 
+      function usedWeekContent(week) {
+        const regularWeek = /^Week (\d+)$/.exec(week.label);
+        const roundCodes = { "Wild Card": "WC", Divisional: "DV", Conference: "CF", "Super Bowl": "SB" };
+        const label = regularWeek ? "WK" : "POST";
+        const number = regularWeek ? regularWeek[1] : roundCodes[week.label];
+        return `<span class="used-week-label" aria-hidden="true">${label}</span><span class="used-week-number" aria-hidden="true">${number}</span>`;
+      }
+
       function renderAvailabilityCell(player, team) {
         const used = usedTeamsFor(player).find((entry) => entry.code === team.code);
         if (!used) {
           return `<td><span class="availability-mark available" aria-label="${player} can still use ${team.name}" title="Available"></span></td>`;
         }
-        const weekLabel = used.week.label.replace("Week ", "W");
-        return `<td><span class="availability-mark used" aria-label="${player} used ${team.name} in ${used.week.label}" title="Used in ${used.week.label}">${weekLabel}</span></td>`;
+        return `<td><span class="availability-mark used" aria-label="${player} used ${team.name} in ${used.week.label}" title="Used in ${used.week.label}">${usedWeekContent(used.week)}</span></td>`;
       }
 
       function renderAvailability() {
@@ -1230,8 +1260,7 @@
                   if (!used) {
                     return `<span class="availability-mark available" aria-label="${player} can still use ${team.name}" title="Available"></span>`;
                   }
-                  const weekLabel = used.week.label.replace("Week ", "W");
-                  return `<span class="availability-mark used" aria-label="${player} used ${team.name} in ${used.week.label}" title="Used in ${used.week.label}">${weekLabel}</span>`;
+                  return `<span class="availability-mark used" aria-label="${player} used ${team.name} in ${used.week.label}" title="Used in ${used.week.label}">${usedWeekContent(used.week)}</span>`;
                 }).join("")}
               </div>
             `).join("")}
