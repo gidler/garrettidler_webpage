@@ -2,150 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="color-scheme" content="only light">
-  <title>Push Fight</title>
-  <meta property="og:title" content="Your Turn — Push Fight">
-  <meta property="og:description" content="A 2-player strategy board game. Push your opponent off the board!">
-  <meta property="og:type" content="website">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='4' width='24' height='24' rx='4' fill='%23e8d5a3' stroke='%235a3e28' stroke-width='3'/%3E%3Crect x='10' y='10' width='12' height='12' rx='2' fill='%232c2c2c'/%3E%3C/svg%3E">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      touch-action: none;
-      background: #f0ebe3;
-      font-family: system-ui, sans-serif;
-      color: #2c2c2c;
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Garrett Idler</title>
+  <script>
+    if (new URLSearchParams(window.location.search).has('g')) {
+      window.location.replace('/pushfight/' + window.location.search + window.location.hash);
     }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* --- Top zone: turn indicator + status --- */
-    #top-zone {
-      flex: 0 0 150px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px 8px;
-      overflow: hidden;
-    }
-    #turn-indicator {
-      font-size: 1.5rem;
-      font-weight: bold;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
-      text-align: center;
-      transition: font-size 0.3s ease;
-    }
-    #turn-indicator.game-over {
-      font-size: 2.8rem;
-      letter-spacing: 0.1em;
-    }
-    #status {
-      font-size: 0.95rem;
-      min-height: 1.2em;
-      text-align: center;
-      color: #666;
-    }
-
-    /* --- Middle zone: board (fills available space) --- */
-    #board-zone {
-      flex: 1 1 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      min-height: 0;
-      width: 100%;
-    }
-    #board-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-    #board-container svg {
-      touch-action: none;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
-      max-width: 100%;
-      max-height: 100%;
-    }
-
-    /* --- Bottom zone: tray + controls (fixed height) --- */
-    #bottom-zone {
-      flex: 0 0 150px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      padding: 8px 16px 16px;
-      overflow: hidden;
-    }
-    #tray-container {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      max-width: 500px;
-      height: 90px;
-    }
-    #tray-container svg {
-      width: 100%;
-      height: 100%;
-      touch-action: none;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
-    }
-    #controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      min-height: 40px;
-      margin-top: 8px;
-    }
-    #controls button {
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid #7f8c8d;
-      background: #5a4a3a;
-      color: #fff;
-      cursor: pointer;
-      font-size: 0.95rem;
-      position: relative;
-    }
-    @keyframes button-glow {
-      0%, 100% { box-shadow: 0 0 6px 2px rgba(58, 143, 212, 0.1); }
-      47% { box-shadow: 0 0 10px 4px rgba(58, 143, 212, 0.75); }
-    }
-    #controls button.glow {
-      animation: button-glow 1.5s ease-in-out infinite;
-    }
-    #controls button[data-active="true"] {
-      background: #c39a46;
-      color: #2c2c2c;
-      border-color: #a07830;
-    }
-  </style>
-  <script type="module" crossorigin src="/assets/index-DIJSPuLH.js"></script>
+  </script>
 </head>
 <body>
-  <div id="top-zone">
-    <div id="turn-indicator"></div>
-    <div id="status"></div>
-  </div>
-  <div id="board-zone">
-    <div id="board-container"></div>
-  </div>
-  <div id="bottom-zone">
-    <div id="tray-container"></div>
-    <div id="controls"></div>
-  </div>
+  <h1>Garrett Idler</h1>
+  <ul>
+    <li><a href="/pushfight/">Push Fight</a></li>
+    <li><a href="/sphere_hunter.html">Sphere Hunter</a></li>
+  </ul>
 </body>
 </html>
