@@ -827,7 +827,13 @@
           -1px 1px 0 var(--team-edge), 0 1px 0 var(--team-edge), 1px 1px 0 var(--team-edge),
           2px 2px 0 var(--team-shadow), 3px 3px 0 #080c28;
       }
-      .pick:has(.team-wordmark) { gap: 6px; }
+      :root[data-style="retro"] .pick:has(.team-wordmark) {
+        box-sizing: border-box;
+        width: 72px;
+        min-width: 72px;
+        flex-shrink: 0;
+        gap: 6px;
+      }
       .pick-result { font-family: ui-monospace, monospace; font-size: 12px; text-shadow: none; }
       .pick.win { --result-border: #16832b; --result-ink: #165a30; }
       .pick.loss { --result-border: #ba1825; --result-ink: #8c1830; }
